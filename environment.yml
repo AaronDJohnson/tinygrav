@@ -1,0 +1,11 @@
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - enterprise-pulsar==3.3.1
+  - enterprise_extensions==2.4.0
+  - pip
+  - "libblas=*=*mkl"
+  - la_forge
+platforms:
+  - linux-64
