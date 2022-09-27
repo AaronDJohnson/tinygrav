@@ -2,15 +2,16 @@
 FROM continuumio/miniconda3 AS build
 
 # Install the package as normal:
-COPY environment.yml .
-RUN conda env create -f environment.yml
+RUN conda install -c conda-forge conda-lock
+COPY conda-linux-64.lock .
+RUN conda-lock install -n enterprise conda-linux-64.lock
 
 # Install conda-pack:
 RUN conda install -c conda-forge conda-pack
 
 # Use conda-pack to create a standalone enviornment
 # in /venv:
-RUN conda-pack -n example -o /tmp/env.tar && \
+RUN conda-pack -n enterprise -o /tmp/env.tar && \
   mkdir /venv && cd /venv && tar xf /tmp/env.tar && \
   rm /tmp/env.tar
 
@@ -19,10 +20,10 @@ RUN conda-pack -n example -o /tmp/env.tar && \
 RUN /venv/bin/conda-unpack
 
 
-# The runtime-stage image; we can use Debian as the
+# The runtime-stage image; we can use Ubuntu as the
 # base image since the Conda env also includes Python
 # for us.
-FROM debian:buster AS runtime
+FROM ubuntu:latest AS runtime
 
 # Copy /venv from the previous stage:
 COPY --from=build /venv /venv
